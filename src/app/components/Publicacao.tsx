@@ -33,46 +33,84 @@ export default function Publicacao({ publicacao }: Props) {
     const [upVote, setUpVote] = useState(publicacao.meta.upvote);
     const [downVote, setDownVote] = useState(publicacao.meta.downvote);
 
+    const [hasClickedUpVote, setHasClickedUpVote] = useState(false);
+    const [hasClickedDownVote, setHasClickedDownVote] = useState(false);
+
 
     const handleUpVote = () => {
-        setUpVote(upVote + 1);
-        const body = {
-            meta: {
-                downvote: downVote,
-                upvote: upVote + 1
-            },
-            _id: publicacao._id,
-            titulo: titulo,
-            autor: {
-                id: publicacao._id,
-                nome: autor
-            },
-            corpo: corpo,
-            comentarios: publicacao.comentarios,
-            data: data,
-            __v: publicacao._v
+        if (!hasClickedUpVote) {
+            setUpVote(upVote + 1);
+            const body = {
+                meta: {
+                    downvote: downVote,
+                    upvote: upVote + 1
+                },
+                _id: publicacao._id,
+                titulo: titulo,
+                autor: {
+                    id: publicacao._id,
+                    nome: autor
+                },
+                corpo: corpo,
+                comentarios: publicacao.comentarios,
+                data: data,
+                __v: publicacao._v
+            }
+
+            const resp = put(`publicacao/${publicacao._id}`, body);
+            setHasClickedUpVote(true);
         }
 
-        const resp = put(`publicacao/${publicacao._id}`, body);
     }
 
     const handleDownVote = () => {
-        setDownVote(downVote + 1);
-        const body = {
-            meta: {
-                downvote: downVote + 1,
-                upvote: upVote
-            },
-            _id: publicacao._id,
-            titulo: titulo,
-            autor: autor,
-            corpo: corpo,
-            comentarios: publicacao.comentarios,
-            data: data,
-            __v: publicacao._v
+        if (!hasClickedDownVote) {
+            setDownVote(downVote + 1);
+            const body = {
+                meta: {
+                    downvote: downVote + 1,
+                    upvote: upVote
+                },
+                _id: publicacao._id,
+                titulo: titulo,
+                autor: autor,
+                corpo: corpo,
+                comentarios: publicacao.comentarios,
+                data: data,
+                __v: publicacao._v
+            }
+
+            const resp = put(`publicacao/${publicacao._id}`, body);
+            setHasClickedDownVote(true);
         }
 
-        const resp = put(`publicacao/${publicacao._id}`, body);
+    }
+
+    function formatarData(dataString: string): string {
+        const data = new Date(dataString);
+        const agora = new Date();
+
+        const diffEmMilissegundos = agora.getTime() - data.getTime();
+
+        const segundos = Math.floor(diffEmMilissegundos / 1000);
+        const minutos = Math.floor(segundos / 60);
+        const horas = Math.floor(minutos / 60);
+        const dias = Math.floor(horas / 24);
+
+        if (dias > 0) {
+            return `${dias} dia${dias > 1 ? 's' : ''} atrás`;
+        } else if (horas > 0) {
+            return `${horas} hora${horas > 1 ? 's' : ''} atrás`;
+        } else if (minutos > 0) {
+            return `${minutos} minuto${minutos > 1 ? 's' : ''} atrás`;
+        } else {
+            if (segundos == 0) {
+                return "agora"
+            } else {
+                return `${segundos} segundo${segundos !== 1 ? 's' : ''} atrás`;
+
+            }
+        }
     }
 
     return (
@@ -86,7 +124,7 @@ export default function Publicacao({ publicacao }: Props) {
                     }
 
                     title={autor}
-                    subheader={data}
+                    subheader={formatarData(data)}
                 />
                 <CardContent>
                     <Typography variant="h5" sx={{ ml: '40%' }} color="text.secondary">

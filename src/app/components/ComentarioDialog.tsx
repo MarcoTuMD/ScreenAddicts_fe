@@ -8,6 +8,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useState } from 'react';
 import { put } from '@/services/ApiRequest';
+import { userAgent } from 'next/server';
 
 type Props = {
     open: boolean,
@@ -18,6 +19,8 @@ type Props = {
 
 export default function ComentarioDialog({ open, onClose, publicacao }: Props) {
     const [corpo, setCorpo] = useState("");
+    const user = JSON.parse(localStorage.getItem("user") || "");
+
 
     const changeCorpo = (corpo: string) => {
         setCorpo(corpo);
@@ -25,7 +28,7 @@ export default function ComentarioDialog({ open, onClose, publicacao }: Props) {
 
     const comentar = () => {
         let comentarios = publicacao.comentarios;
-        const comentario = { corpo: corpo, autor: { id: "1234", nome: "Ana" } }
+        const comentario = { corpo: corpo, autor: { id: user._id, nome: user.nome } }
         comentarios.push(comentario);
         const body = {
             meta: {

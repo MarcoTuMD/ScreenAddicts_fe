@@ -18,6 +18,7 @@ type Props = {
 export default function PublicacaoDialog({ open, onClose }: Props) {
     const [titulo, setTitulo] = useState("");
     const [corpo, setCorpo] = useState("");
+    const user = JSON.parse(localStorage.getItem("user") || "");
 
     const changeTitulo = (titulo: string) => {
         setTitulo(titulo);
@@ -33,8 +34,8 @@ export default function PublicacaoDialog({ open, onClose }: Props) {
             titulo: titulo,
             corpo: corpo,
             autor: {
-                id: "123",
-                nome: "Marco Tulio"
+                id: user._id,
+                nome: user.nome
             }
         }
         await post("publicacao", body);

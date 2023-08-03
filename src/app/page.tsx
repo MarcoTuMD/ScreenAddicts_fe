@@ -10,10 +10,19 @@ import NavBar from './components/NavBar';
 import PublicacaoDialog from './components/PublicacaoDialog';
 import { useEffect, useState } from 'react';
 import { get } from "../services/ApiRequest";
+import { useRouter } from 'next/navigation';
+
 
 export default function Home() {
   const [open, setOpen] = useState(false);
   const [publicacoes, setPublicacoes] = useState([]);
+
+  const router = useRouter();
+
+  if (localStorage.getItem("user") == "{}") {
+    router.push("/login")
+  }
+
 
   const getPublicacoes = async () => {
     const resp = await get("publicacao", {});
@@ -22,6 +31,8 @@ export default function Home() {
   }
 
   useEffect(() => {
+
+
     getPublicacoes();
   }, [])
 
@@ -29,6 +40,8 @@ export default function Home() {
     getPublicacoes();
     setOpen(false)
   }
+
+
 
   return (
     <>
