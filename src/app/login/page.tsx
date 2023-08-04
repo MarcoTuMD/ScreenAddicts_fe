@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { get } from '@/services/ApiRequest';
 import { useRouter } from 'next/navigation';
+import CadastrarUsuarioDialog from '../components/CadastrarUsuarioDialog';
 
 
 
@@ -19,6 +20,8 @@ export default function Login() {
 
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
+
+    const [openCadastro, setOpenCadastro] = useState(false);
 
     const router = useRouter();
 
@@ -32,49 +35,59 @@ export default function Login() {
     }
 
     const fazerLogin = async () => {
-        const body = {
-            email: email,
-            senha: senha,
-        }
-        const user = await get("usuario", body)
+        if (senha != "" && email != "") {
+            const body = {
+                email: email,
+                senha: senha,
+            }
+            const user = await get("usuario", body)
 
-        if (user.length > 0) {
-            localStorage.setItem("user", JSON.stringify(user[0]));
-            router.push("/");
+            if (user.length > 0) {
+                localStorage.setItem("user", JSON.stringify(user[0]));
+                router.push("/");
+            }
         }
+
     }
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: '10%' }}>
-            <Card sx={{ maxWidth: '40%', minHeight: '30%', textAlign: 'center', bgcolor: 'ButtonFace' }}>
-                <CardContent>
-                    <Typography variant='h4'>
-                        Login
-                    </Typography>
-                    <TextField
-                        id="outlined-multiline-flexible"
-                        label="Email"
-                        fullWidth
-                        sx={{ mt: 2 }}
-                        value={email}
-                        onChange={(e) => { changeEmail(e.target.value); }}
-                    />
-                    <TextField
-                        id="outlined-multiline-flexible"
-                        label="Senha"
-                        fullWidth
-                        sx={{ mt: 2 }}
-                        type='password'
-                        value={senha}
-                        onChange={(e) => { changeSenha(e.target.value); }}
-                    />
-                </CardContent>
-                <CardActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Button variant='contained' onClick={fazerLogin}>Fazer Login</Button>
-                </CardActions>
-            </Card>
+        <>
+            <CadastrarUsuarioDialog open={openCadastro} onClose={() => setOpenCadastro(false)} />
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: '10%' }}>
+                <Card sx={{ maxWidth: '40%', minHeight: '30%', textAlign: 'center', bgcolor: 'ButtonFace' }}>
+                    <CardContent>
+                        <Typography variant='h4'>
+                            Login
+                        </Typography>
+                        <TextField
+                            id="outlined-multiline-flexible"
+                            label="Email"
+                            fullWidth
+                            sx={{ mt: 2 }}
+                            value={email}
+                            onChange={(e) => { changeEmail(e.target.value); }}
+                            required
+                        />
+                        <TextField
+                            id="outlined-multiline-flexible"
+                            label="Senha"
+                            fullWidth
+                            sx={{ mt: 2 }}
+                            type='password'
+                            value={senha}
+                            onChange={(e) => { changeSenha(e.target.value); }}
+                            required
+                        />
+                    </CardContent>
+                    <CardActions sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                        <Button variant='contained' onClick={fazerLogin}>Fazer Login</Button>
+                        <Button variant='text' sx={{ mt: 1 }} onClick={() => setOpenCadastro(true)}>Criar Conta</Button>
+                    </CardActions>
+                </Card>
 
-        </Box>
+            </Box>
+
+        </>
 
     );
 }

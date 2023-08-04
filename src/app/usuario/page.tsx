@@ -40,15 +40,20 @@ export default function Usuario() {
     const [openExcluirConta, setOpenExcluirConta] = useState(false);
     const router = useRouter();
 
-    if (localStorage.getItem("user") == "{}") {
-        router.push("/login")
-    }
+
 
 
 
     useEffect(() => {
         setUser(JSON.parse(localStorage.getItem("user") || ""));
     }, [openNome, openEmail, openDataNsc, openCpf, openSenha])
+
+    useEffect(() => {
+        if (localStorage.getItem("user") == "{}") {
+            router.push("/login")
+        }
+    }, [])
+
 
     const sair = () => {
         localStorage.setItem("user", "{}");
@@ -93,7 +98,7 @@ export default function Usuario() {
                     </IconButton>
                 </Paper>
                 <Paper elevation={3} sx={{ p: 1, mt: 2, display: 'flex', justifyContent: "space-between" }}>
-                    <Typography variant="h6"  >Senha: {user.senha}</Typography>
+                    <Typography variant="h6"  >Senha: ********</Typography>
                     <IconButton aria-label="edit" color='warning' onClick={() => setOpenSenha(true)}>
                         <EditIcon />
                     </IconButton>
